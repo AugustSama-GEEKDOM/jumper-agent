@@ -119,6 +119,9 @@ select = ["E4", "E7", "E9", "F"]
 # A test that `importorskip`s torch or mjlab has to do so before the imports
 # that need them, which is E402 by construction.
 "tests/*" = ["E402"]
+# A notebook cell imports where it first needs a name, after the form fields
+# Colab reads off the top of the cell; ruff 0.16 lints notebooks by default.
+"notebooks/*.ipynb" = ["E402"]
 # One-off checks and asset tools are written dense -- several statements to a
 # line, an import where it is first needed -- on purpose: each is read once,
 # beside the measurement it produced. Only the layout is exempt; a dead import
