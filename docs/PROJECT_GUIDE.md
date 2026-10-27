@@ -2,10 +2,10 @@
 
 [Home](../README.md) · [简体中文](PROJECT_GUIDE.zh.md)
 
-Jumper Agent is a feature branch derived from
-[KingKongRobotics/jumper](https://github.com/KingKongRobotics/jumper). It brings the inherited
-robot-training and simulation code together with the Tiaotiao web app, the two-screen simulator
-display, and the desktop mirroring GUI.
+Jumper Agent is a GitHub fork of
+[KingKongRobotics/jumper](https://github.com/KingKongRobotics/jumper). The active project branch
+is \`jumper-agent\`; it brings the inherited robot-training and simulation code together with
+the Tiaotiao web app, the two-screen simulator display, and the desktop mirroring GUI.
 
 ## Pick a starting point
 

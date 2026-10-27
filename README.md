@@ -4,10 +4,10 @@
 
 **English** | [简体中文](README.zh.md)
 
-> **Project lineage:** Jumper Agent is a feature branch derived from
-> [KingKongRobotics/jumper](https://github.com/KingKongRobotics/jumper). It keeps the
-> robot-training and MuJoCo simulation foundation and adds the Tiaotiao browser face,
-> dual-screen mirroring, and local AI action control.
+> **Project lineage:** This repository is a GitHub fork of
+> [KingKongRobotics/jumper](https://github.com/KingKongRobotics/jumper). Its active project
+> branch is \`jumper-agent\`, which keeps the robot-training and MuJoCo simulation foundation
+> and adds the Tiaotiao browser face, dual-screen mirroring, and local AI action control.
 
 Jumper Agent brings the robot model, motion tools, simulator, browser eyes, and desktop
 screen-casting workflow together in one repository. The repository is

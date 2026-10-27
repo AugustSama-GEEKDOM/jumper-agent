@@ -1,12 +1,12 @@
-<!-- tracks: PROJECT_GUIDE.md @ sha256:9a363f4e1098bec2 -->
+<!-- tracks: PROJECT_GUIDE.md @ sha256:86119640c7c508d1 -->
 
 # Jumper Agent 项目指南
 
 [首页](../README.zh.md) · [English](PROJECT_GUIDE.md)
 
-Jumper Agent 是从 [KingKongRobotics/jumper](https://github.com/KingKongRobotics/jumper) 分支发展
-而来的项目。它把继承而来的机器人训练与仿真代码，与跳跳网页、双圆屏模拟器显示和桌面投屏 GUI
-整合到同一仓库。
+Jumper Agent 是 [KingKongRobotics/jumper](https://github.com/KingKongRobotics/jumper) 的
+GitHub fork。当前项目分支为 \`jumper-agent\`，在上游机器人训练与仿真代码基础上，集成了跳跳网页、
+双圆屏模拟器显示和桌面投屏 GUI。
 
 ## 按目标开始
 

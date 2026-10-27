@@ -1,4 +1,4 @@
-<!-- tracks: README.md @ sha256:4690fa9743c15cd5 -->
+<!-- tracks: README.md @ sha256:85e3a5b25b92c84f -->
 
 ![跳跳 Agent](docs/media/jumper-hero-zh.png)
 
@@ -6,9 +6,10 @@
 
 [English](README.md) | **简体中文**
 
-> **项目来源：** Jumper Agent 是从
-> [KingKongRobotics/jumper](https://github.com/KingKongRobotics/jumper) 分支发展而来的项目。
-> 它保留了机器人训练与 MuJoCo 仿真的基础，并集成跳跳网页表情、双圆屏投屏和本机 AI 动作控制。
+> **项目来源：** 本仓库是
+> [KingKongRobotics/jumper](https://github.com/KingKongRobotics/jumper) 的 GitHub fork。
+> 当前项目分支为 \`jumper-agent\`，保留机器人训练与 MuJoCo 仿真基础，并集成跳跳网页表情、
+> 双圆屏投屏和本机 AI 动作控制。
 
 这个仓库把机器人模型、动作工具、模拟器、网页眼睛和桌面投屏流程放在一起。
 仓库地址：[AugustSama-GEEKDOM/jumper-agent](https://github.com/AugustSama-GEEKDOM/jumper-agent)。

@@ -2,9 +2,10 @@
 
 Jumper Agent is maintained at
 [AugustSama-GEEKDOM/jumper-agent](https://github.com/AugustSama-GEEKDOM/jumper-agent) as a
-feature branch derived from [KingKongRobotics/jumper](https://github.com/KingKongRobotics/jumper).
-The branch retains the training, simulator, and controller foundation and adds the Tiaotiao web
-application, simulator display streaming, and local action integration.
+GitHub fork of [KingKongRobotics/jumper](https://github.com/KingKongRobotics/jumper). Its
+default project branch is \`jumper-agent\`, which retains the training, simulator, and controller
+foundation and adds the Tiaotiao web application, simulator display streaming, and local action
+integration.
 
 ## Source and component boundaries
 
