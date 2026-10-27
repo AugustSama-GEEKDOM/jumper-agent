@@ -13,8 +13,8 @@ Clone the repositories independently only when execution requires them. A root t
 does not require Git LFS:
 
 ```bash
-git clone https://github.com/KingKongRobotics/jumper.git
-cd jumper
+git clone https://github.com/AugustSama-GEEKDOM/jumper-agent.git
+cd jumper-agent
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -e ".[dev]"
@@ -98,7 +98,7 @@ To replay a trained policy in this world, return to the root training checkout, 
 environment, and supply a checkpoint and the separately produced map:
 
 ```bash
-cd ../jumper
+cd ../jumper-agent
 source .venv/bin/activate
 python scripts/play.py --task jumper.tripod --checkpoint <checkpoint.pt> \
   --scene ../jumper-design/outputs/obstacle-course.map

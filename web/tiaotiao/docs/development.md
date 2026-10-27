@@ -1,87 +1,75 @@
-# 开发文档
+# 跳跳网页开发说明
 
-## 技术组成
+本文件记录 web/tiaotiao 的实现边界与维护入口。Jumper Agent 的训练框架、MuJoCo 模拟器、双屏投放和
+完整开发检查见仓库根目录 [docs/DEVELOPMENT.zh.md](../../../docs/DEVELOPMENT.zh.md)；Windows 整合
+启动与联调步骤见 [网页与模拟器开发说明](../../../docs/TIAOTIAO_DEVELOPMENT.zh.md)。
 
-- 前端：原生 HTML、CSS、ES Modules 风格的浏览器 JavaScript（脚本以普通 defer 方式加载），没有打包步骤。
-- 服务端：Node.js 内置 `http`、`fs`、`path` 模块和运行时提供的 `fetch`，没有第三方 npm 运行依赖。
-- 浏览器能力：SpeechRecognition、SpeechSynthesis、SVG、CSS 动画、localStorage、Audio。
-- 运行地址：默认 `http://127.0.0.1:4183/`，可通过环境变量 `PORT` 修改端口。
+## 组件边界
 
-## 目录结构
+网页由原生 HTML、CSS 和 JavaScript 构成，没有构建步骤和第三方 npm 运行依赖。Node 服务使用内置
+HTTP、文件系统和 fetch API，并只绑定本机回环地址。API 凭据在 Node 进程中读取，不传入浏览器。
+浏览器同步和桌面捕获都向 MuJoCo 的两个渲染纹理提供 RGB 帧；两种来源不可同时向一个模拟器实例
+投帧。
 
-```text
-.
-├── app.js                 # 表情状态、语音识别、对话、音乐和天气客户端逻辑
-├── index.html             # 主页面和调试台 DOM
-├── style.css              # 眼睛、媒体页面、表情动画和调试台样式
-├── server.mjs             # 本地 HTTP 服务、提示词、API 代理
-├── favicon.svg            # 页面图标
-├── .env.example           # 无密钥的配置模板
-├── start-tiaotiao.bat     # ZIP 内的 Windows 启动入口
-├── 启动跳跳.bat           # 中文文件名启动入口（工作目录保留）
-├── promo.html / promo.css / promo.js # 独立宣传动画页面源码
-├── tools/                  # 文档截图等开发辅助脚本
-├── docs/screenshots/       # 15 张文档截图
-├── render-demo.mjs        # 主眼睛页面视频录制脚本（本机工具路径需按环境修改）
-└── docs/                  # 使用、开发、API 与部署说明
-```
+| 组件 | 入口 | 维护内容 |
+|---|---|---|
+| 页面结构 | index.html | 眼睛 SVG、天气/音乐布局、按钮、调试区域 |
+| 样式 | style.css | 圆屏布局、SVG 状态动画、响应式规则 |
+| 浏览器逻辑 | app.js | 表情状态、语音、天气/音乐、投屏画面与动作队列 |
+| 本机服务 | server.mjs | 静态资源、配置读取、API 代理、动作协议校验 |
+| 界面演示资源 | promo.html、promo.css、promo.js | 与产品网页隔离的宣传动画 |
 
-## 本地开发
+## 本地配置和开发
 
-从项目目录运行 `start-tiaotiao.bat`，或直接执行：
+在本目录复制 .env.example 为 .env。公开模板中的 AI 地址、凭据和模型都为空，不提供内置服务端点
+或默认模型。修改本机配置后重启 Node 服务。密钥不能进入 app.js、浏览器存储、截图或 git 提交。
 
-```powershell
+~~~powershell
 node --check app.js
 node --check server.mjs
 node server.mjs
-```
+~~~
 
-服务端配置位于项目目录的 .env。AI API 地址和默认模型在公开版本中为空；启用聊天时本地填写 OPENAI_API_URL、OPENAI_API_KEY 和 OPENAI_MODEL，修改后重启 Node 服务。
+使用浏览器访问本机服务。麦克风交互依赖支持语音识别的浏览器和相应权限；自动化无头浏览器可检查
+布局与状态，不能代替真实麦克风测试。Node 服务端日志只应记录排错所需状态，不能写入密钥或完整
+授权请求头。
 
-访问 GET /api/status 可检查聊天服务是否已配置、音乐密钥状态和默认模型；公开示例中的模型为空，接口不会返回密钥。
+## 浏览器与模拟器同步
 
-`preview-promo.mjs` 和 `qa-layout.mjs` 用于宣传动画截图与布局检查；`render-demo.mjs` 用于录制主眼睛演示视频。它们依赖本机 Edge、Playwright 和 ffmpeg 路径，换电脑后需要按实际安装位置修改脚本，主网页运行不依赖这些脚本。
+网页由同步 URL 参数取得本机屏幕接收地址。app.js 将两侧当前内容绘制到独立的 256 × 256 canvas，
+组成一帧二进制 RGB 数据后发送给模拟器。眼睛、音乐和天气界面共用这条渲染路径。表情 SVG 有动画，
+需要通过 canvas 绘制，因此浏览器同步是独立的低频画面生产者。
 
-`tools/capture-doc-screenshots.mjs` 启动一个无麦克风的 Edge 页面，使用前端公开的状态函数设置演示状态，然后保存文档截图。它不会调用聊天、天气或音乐上游接口；天气和音乐内容是前端构造的样例。截图图库见 [screenshot-gallery.md](screenshot-gallery.md)。
+完整项目整合启动器默认每秒推送约 12 帧。桌面捕获 GUI 的速度约每秒 10 帧。二者写入同一接收端
+时会相互覆盖。调试时确认同步 URL 是否存在，且桌面投屏没有同时开启。纹理用于 viewer 显示，不进入
+策略输入。
 
-## 前端流程
+## 动作队列
 
-`app.js` 管理状态与页面：`idle`、`listening`、`thinking`、`synthesis`、`speaking`，以及 `music`、`weather` 等页面状态。`setState()` 更新状态并触发表情过渡；`showExpression()` 插值更新眼睛 SVG 路径；`lookAt()` 和待机计时器管理注视方向。
+server.mjs 校验 ACTION 数据中的步骤类型、方向和数量；app.js 清理控制行并按顺序执行动作。动作桥
+仅绑定本机，调用现有模拟器键位映射。页面的任务列表通过请求响应和设定的执行时长更新，不是对
+controller 内部动作完成事件的直接订阅。
 
-识别连续运行并处理 interim results。唤醒词命中后进入 `command` 模式；静音达到约 1.5 秒后提交对话。模型返回音乐或天气控制行时，前端解析控制行，不把其内容作为语音播报，再调用相应代理接口。手动“进入聆听”复用相同指令收集流程，跳过唤醒词。
+如果调整 AI 提示词、动作解析规则或按键映射，要一起检查：
 
-模型名和背景色使用浏览器本地 `localStorage` 保存。它们与服务端密钥配置互相独立。
+- 服务端生成的步骤仍符合协议允许值。
+- 多步请求在网页中保持原顺序，失败后正确显示状态。
+- 行走使用步态控制映射，舞蹈和手势调用现有动作，停止键能结束当前动作。
+- 未启动模拟器时，网页明确显示动作桥不可用，不伪称执行成功。
 
-## 提示词与模型
+动作协议和本机动作桥细节见根目录
+[顺序动作协议](../../../docs/TIAOTIAO_DEVELOPMENT.zh.md#顺序动作协议)。
 
-`server.mjs` 顶部的 `SYSTEM_PROMPT` 是聊天系统提示词。`POST /api/chat` 将它作为 system 消息发送给 OpenAI 兼容接口。修改提示词后必须重启服务。
+## 测试和维护
 
-默认模型值来自 OPENAI_MODEL，公开示例留空。也可以在调试台输入模型名称；名称保存在当前浏览器的本地存储中，清空后不会回退到内置模型。
+~~~powershell
+node --check app.js
+node --check server.mjs
+python -m pytest ../../tests/test_web_host.py ../../tests/test_screen_display.py -q
+~~~
 
-## 添加表情
+如有针对纯前端状态的自动化检查，可运行当前项目的布局 QA 脚本；需要截图时使用
+tools/capture-doc-screenshots.mjs。演示截图中的内容不得包含本机 API 地址、密钥或浏览器个人信息。
 
-在 `app.js` 的 `shapes` 中定义 SVG 曲线控制点和线宽，在 `moods` 中把表情名映射为左右眼形状；需要按钮时在 `index.html` 的 `#expression-buttons` 新增 `data-expression` 按钮。需要状态专属效果时，在 `style.css` 按 `#eye-stage[data-state=...]` 或 `data-expression` 增加动画规则。新形状左右眼控制点的数量应一致，以便路径插值动画正常工作。
-
-## 修改背景颜色功能
-
-背景由 CSS 变量 `--page-background` 控制，设置入口在 `index.html` 调试台，初始化和持久化逻辑在 `app.js`，背景实际应用在 `style.css` 的 `:root`、`html/body` 和 `.eye-display`。
-
-## 调试建议
-
-1. 检查终端中 Node 服务的启动与运行信息。
-2. 使用 `GET /api/status` 确认密钥配置状态。
-3. 打开 Edge DevTools Console 查看前端异常。
-4. 使用调试台观察识别文本、AI 阶段、TTS 状态和媒体错误。
-5. `SpeechRecognition` 需要 Edge 支持、联网、麦克风权限；自动化浏览器没有真实麦克风时，可测试 UI 状态但不能验证真实语音识别质量。
-
-## 代码阅读顺序
-
-建议按以下顺序阅读，能最快建立完整模型：
-
-1. 先看 `index.html`，确认所有运行时 DOM id 和表单入口。
-2. 再看 `style.css` 的主题变量、状态选择器和媒体查询。
-3. 阅读 `app.js` 的 `shapes`、`moods`、`setState()` 和 `showExpression()`，理解视觉层。
-4. 阅读 `app.js` 的 `recognition.onresult`、`finishCommand()` 和 `askAssistant()`，理解语音链路。
-5. 阅读 `app.js` 的 `queryWeather()`、`playMusicByQuery()` 和 `synthesizeAndPlay()`，理解三个异步能力。
-6. 最后看 `server.mjs` 的路由、校验和上游归一化。
-7. 用 `docs/code-reference.md` 的时序图和验证矩阵逐项复现。
+修改组件后，更新此仓库的英文或中文说明，并同步维护根目录的集成指南。公开源码包从根目录
+package-project.ps1 生成；web 子目录的打包脚本仅面向网页组件，不是完整 Jumper Agent 项目包。

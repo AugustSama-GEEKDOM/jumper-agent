@@ -1,70 +1,71 @@
-<!-- tracks: README.md @ sha256:34ff930d15a0c439 -->
+<!-- tracks: README.md @ sha256:4690fa9743c15cd5 -->
 
-![跳跳](docs/media/jumper-hero-zh.png)
+![跳跳 Agent](docs/media/jumper-hero-zh.png)
 
-# 跳跳
+# Jumper Agent
 
 [English](README.md) | **简体中文**
 
-**跳跳是一台 22 自由度螃蟹机器人。** [查看硬件 →](docs/HARDWARE.zh.md)
+> **项目来源：** Jumper Agent 是从
+> [KingKongRobotics/jumper](https://github.com/KingKongRobotics/jumper) 分支发展而来的项目。
+> 它保留了机器人训练与 MuJoCo 仿真的基础，并集成跳跳网页表情、双圆屏投屏和本机 AI 动作控制。
 
-本仓库是跳跳的外观、动作与场景创作 AI 工具集。在 AI 编程助手中打开本仓库，试试下面的提示词。
+这个仓库把机器人模型、动作工具、模拟器、网页眼睛和桌面投屏流程放在一起。
+仓库地址：[AugustSama-GEEKDOM/jumper-agent](https://github.com/AugustSama-GEEKDOM/jumper-agent)。
 
-> 🦀 **免费获得跳跳！** [了解如何领取 →](https://beunlimited.me/zh/events/crab-robot-challenge-2026)
+## 项目包含什么
 
-## 一句话，设计外观
+- 22 关节跳跳模型、MuJoCo 场景、运动任务、训练、回放、策略导出和控制器动作包。
+- 由策略驱动的桌面模拟器。模型上有两个与原机 0.9 英寸圆屏规格对应的渲染屏幕。
+- Windows 圆形区域投屏 GUI：分别选择电脑桌面上的两个圆形画面，传输到模拟器屏幕。
+- 跳跳网页眼睛：包括动画表情、语音交互、天气与音乐界面，以及网页到模拟器的表情同步。
+- 可选的 AI 动作队列：按顺序执行有限的移动和内置动作，并在网页显示进度。
 
-> 为跳跳设计一个暖沙色游侠外观，统一身体和四肢配色，并导出 `.skin`。
+投屏只更新模拟器的显示纹理，不会增加摄像头观测或真实硬件显示传输。AI 动作桥只控制本机
+模拟器，不是机器人硬件控制 API。
 
-| | | |
-|:-:|:-:|:-:|
-| ![暖沙色游侠外观](docs/media/design-warm-sand.png) | ![银色装甲外观](docs/media/design-silver-armor.png) | ![Raphael Turtle 外观](docs/media/design-raphael.png) |
-| [**暖沙色游侠**](https://github.com/KingKongRobotics/jumper-design/blob/be74e0f2e5e2433d24a3a7b1c1aa0dbeae480356/library/skins/warm-sand-ranger-integrated-v2.skin) | [**银色装甲**](https://github.com/KingKongRobotics/jumper-design/blob/be74e0f2e5e2433d24a3a7b1c1aa0dbeae480356/library/skins/mecha-tripo-v3.skin) | [**Raphael Turtle**](https://github.com/KingKongRobotics/jumper-design/blob/be74e0f2e5e2433d24a3a7b1c1aa0dbeae480356/library/skins/raphael-turtle-v1.skin) |
+## 在 Windows 启动整合演示
 
-[浏览全部外观](https://github.com/KingKongRobotics/jumper-design/tree/main/library/skins)
+整合启动器需要 Windows 10/11、安装在默认用户目录的 Python 3.11、Node.js 18 或更新版本、
+Microsoft Edge，以及仓库 out 目录下可用的示例动作包。请把 Python 依赖安装到启动器调用的
+同一个 Python 3.11 环境中：
 
-## 一句话，训练动作
+~~~powershell
+$python = Join-Path $env:LOCALAPPDATA 'Programs\Python\Python311\python.exe'
+& $python -m pip install -e '.[screen-mirror]'
+.\start-tiaotiao-web-simulator.ps1
+~~~
 
-> 为跳跳训练稳定的三足步态，回放并评估效果，然后打包生成 `.app` 动作包。
+启动器会打开本机网页，同时启动模拟器和投屏窗口。在 GUI 中输入桌面圆形画面的直径，
+依次选择两个区域，然后开始投屏。配置、控制和排错方式见
+[网页与模拟器开发指南](docs/TIAOTIAO_DEVELOPMENT.zh.md)。
 
-| | | |
-|:-:|:-:|:-:|
-| ![跳跳行走](docs/media/walk.gif) | ![跳跳改变姿态](docs/media/posture.gif) | ![跳跳挥手](docs/media/gesture.gif) |
-| **行走** | **姿态** | **手势** |
-| ![舞蹈仿真](docs/media/dance.gif)<br>![舞蹈官网展示](docs/media/official-dance.gif) | ![跳跃仿真](docs/media/jump.gif)<br>![跳跃官网展示](docs/media/official-jump.gif) | ![抓取仿真](docs/media/claw.gif)<br>![抓取官网展示](docs/media/official-grasp.gif) |
-| **舞蹈** | **跳跃** | **抓取** |
+## 训练或回放动作
 
-## 一句话，生成场景
+根据 CPU 或 NVIDIA GPU 创建合适的环境，然后安装本仓库：
 
-> 为跳跳生成一个有起伏地形、树木和长椅的公园泵道场景，并导出 `.map`。
+~~~bash
+python -m venv .venv
+python -m pip install -e '.[dev]'
+python scripts/train.py --list
+python scripts/play.py --task jumper.tripod
+~~~
 
-| | | |
-|:-:|:-:|:-:|
-| ![公园泵道场景](docs/media/design-park.png) | ![卧室场景](docs/media/design-bedroom.png) | ![足球场景](docs/media/design-soccer.png) |
-| [**公园泵道**](https://github.com/KingKongRobotics/jumper-design/blob/be74e0f2e5e2433d24a3a7b1c1aa0dbeae480356/library/maps/park-pump-track.map) | [**卧室**](https://github.com/KingKongRobotics/jumper-design/blob/be74e0f2e5e2433d24a3a7b1c1aa0dbeae480356/library/maps/bedroom.map) | [**足球**](https://github.com/KingKongRobotics/jumper-design/blob/be74e0f2e5e2433d24a3a7b1c1aa0dbeae480356/library/maps/soccer.map) |
+环境和工作流选择见[项目指南](docs/PROJECT_GUIDE.zh.md)；仓库结构、检查和贡献流程见
+[开发指南](docs/DEVELOPMENT.zh.md)。
 
-[浏览全部场景](https://github.com/KingKongRobotics/jumper-design/tree/main/library/maps)
+## 文档
 
-## 相关项目与指南
-
-| 资源 | 用途 |
+| 指南 | 内容 |
 |---|---|
-| [jumper-design](https://github.com/KingKongRobotics/jumper-design) | 外观与场景生成；AI 读取其[工作说明](https://github.com/KingKongRobotics/jumper-design/blob/main/AGENTS.md)，按需使用工具。 |
-| [训练教程](docs/TUTORIAL.zh.md) | 本仓库中的动作训练、回放与策略导出。 |
-| [Colab 训练](docs/COLAB.zh.md) | 在 Notebook 中使用 GPU 训练、备份与恢复检查点、导出 ONNX 并录制仿真 MP4。 |
-| [动作包格式](deploy/BUNDLE.md) | 将训练好的动作及控制器打包为 `.app`；环境要求见[构建指南](deploy/README.md)。 |
-| [项目指南](docs/PROJECT_GUIDE.zh.md) | 环境安装、当前能力和更多文档。 |
-| [跳跳网页开发说明](docs/TIAOTIAO_DEVELOPMENT.zh.md) | 网页与模拟器架构、AI 动作协议、开发检查和项目打包。 |
+| [项目指南](docs/PROJECT_GUIDE.zh.md) | 环境准备、主要模块和工作流入口 |
+| [开发指南](docs/DEVELOPMENT.zh.md) | 架构、本机检查、打包和参与开发 |
+| [网页与模拟器指南](docs/TIAOTIAO_DEVELOPMENT.zh.md) | 网页眼睛、区域投屏、动作队列和 Windows 启动器 |
+| [投屏技术说明](docs/SCREEN_MIRROR.md) | 屏幕几何、数据流和模拟器接收端 |
+| [训练手册](docs/USAGE.zh.md) | 训练命令、任务、资源和参数 |
+| [部署说明](deploy/README.md) | 控制器动作包和硬件部署路径 |
 
-训练基于 [mjlab](https://github.com/mujocolab/mjlab)、
-[rsl_rl](https://github.com/leggedrobotics/rsl_rl)、[MuJoCo](https://github.com/google-deepmind/mujoco)
-和 [MuJoCo Warp](https://github.com/google-deepmind/mujoco_warp)。
-外观与场景示例图片来自 jumper-design，出处见[图片来源](docs/media/DESIGN_SOURCES.md)，
-第三方材料归属见 [NOTICE](NOTICE)。
+## 许可证与声明
 
-## 许可证
-
-Copyright 2026 KingKong Robotics.
-
-维护者拥有权利的项目内容采用 Apache-2.0。详见 [LICENSE](LICENSE)、[NOTICE](NOTICE)
-和[许可说明](docs/PROJECT_GUIDE.zh.md#许可证)。第三方内容保留其各自的许可条款；使用本工具生成的文件不会自动继承本仓库许可证。
+项目拥有的内容采用 [LICENSE](LICENSE) 中的许可。第三方组件和媒体见 [NOTICE](NOTICE)。
+由本项目生成的内容不会自动继承仓库许可证。

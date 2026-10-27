@@ -444,7 +444,7 @@ def export(scene_id: str, out_root: Path) -> Path:
         "tags": list(meta.tags),
         "use": meta.use,
         "exportedBy": {
-            "repo": "KingKongRobotics/jumper",
+            "repo": "AugustSama-GEEKDOM/jumper-agent",
             "commit": _git_commit(),
             "tool": "scenes/tools/export_web_scene.py",
             "mujocoAtLeast": _MUJOCO_MIN,

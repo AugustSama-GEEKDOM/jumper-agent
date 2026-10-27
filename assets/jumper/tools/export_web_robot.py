@@ -230,7 +230,7 @@ def export(out: Path) -> None:
             "keyframe": "init_state",
         },
         "exportedBy": {
-            "repository": "KingKongRobotics/jumper",
+            "repository": "AugustSama-GEEKDOM/jumper-agent",
             "commit": _git_commit(),
             "mujoco": mujoco.__version__,
             "tool": "assets/jumper/tools/export_web_robot.py",

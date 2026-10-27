@@ -1,22 +1,22 @@
 # Contributing
 
-This repository keeps the training framework, robot tasks, model assets and deployment
-controller in one tree. Start with the small check that matches the change; run the whole
-suite before handing it over.
+Jumper Agent is a feature branch derived from
+[KingKongRobotics/jumper](https://github.com/KingKongRobotics/jumper). It keeps the training
+framework, robot tasks, model assets and deployment controller, and adds the Tiaotiao web app,
+simulator screens, and desktop mirroring tools. Start with the
+[development guide](docs/DEVELOPMENT.md) and run the checks that match the change.
 
 ```bash
-git clone https://github.com/KingKongRobotics/jumper.git
-cd jumper
+git clone https://github.com/AugustSama-GEEKDOM/jumper-agent.git
+cd jumper-agent
 python3 -m venv .venv && source .venv/bin/activate
-pip install -e ".[dev]"
-python -m pytest tests/ -q
-python -m ruff check .
+pip install -e ".[dev,screen-mirror]"
 ```
 
 The full environment procedure, including platform-specific PyTorch and the Rust toolchain,
-is in [`docs/USAGE.md`](docs/USAGE.md#setting-up). Architecture and trade-offs belong in
-[`docs/DESIGN.md`](docs/DESIGN.md); day-to-day commands and extension guides belong in
-[`docs/USAGE.md`](docs/USAGE.md).
+is in [`docs/USAGE.md`](docs/USAGE.md#setting-up). The branch-specific architecture and
+validation steps are in [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md), while browser and
+simulator changes are covered by [`docs/TIAOTIAO_DEVELOPMENT.md`](docs/TIAOTIAO_DEVELOPMENT.md).
 
 ## Directory layout
 

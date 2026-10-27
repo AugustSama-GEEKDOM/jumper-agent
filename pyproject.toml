@@ -59,9 +59,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/KingKongRobotics/jumper"
-Repository = "https://github.com/KingKongRobotics/jumper"
-Issues = "https://github.com/KingKongRobotics/jumper/issues"
+Homepage = "https://github.com/AugustSama-GEEKDOM/jumper-agent"
+Repository = "https://github.com/AugustSama-GEEKDOM/jumper-agent"
+Issues = "https://github.com/AugustSama-GEEKDOM/jumper-agent/issues"
 
 [project.optional-dependencies]
 dev = ["pytest", "ruff"]

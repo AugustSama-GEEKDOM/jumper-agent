@@ -1,107 +1,154 @@
 # Tiaotiao web and simulator development
 
-This copy adds a browser-based robot face, desktop screen mirroring, and sequential AI action
-control to the Jumper simulator. The original Jumper checkout is a separate directory; develop
-and test these additions from this copy.
+[Project guide](PROJECT_GUIDE.md) · [简体中文](TIAOTIAO_DEVELOPMENT.zh.md)
 
-## Components
+This guide documents the Tiaotiao browser face and its connection to the Jumper simulator. The
+whole-project architecture and checks are in [DEVELOPMENT.md](DEVELOPMENT.md).
 
-- `web/tiaotiao/server.mjs` serves the page and proxies chat, weather, and music requests. It
-  validates the model's `ACTION` control payload and has a deterministic parser for common
-  Chinese movement and gesture requests when the model omits or malforms that payload.
-- `web/tiaotiao/app.js` parses `ACTION` rows, displays the task list, sends one action at a time,
-  and marks each task pending, running, done, or failed.
-- `assets/jumper/tools/screen_cast.py` starts the policy-driven `play --app` simulator, mirrors
-  the selected desktop circles, and exposes the simulator's loopback action bridge.
-- `rl/mjrl/app_play.py` owns the simulator keyboard/FSM path. The bridge sends the same mapped
-  controls the viewer already accepts, so movement uses the bundled gait policy.
-- `start-tiaotiao-web-simulator.ps1` launches the web server, cast GUI, simulator, and Edge page.
+## Windows integrated demo
 
-## Local setup and launch
+The integrated launcher expects Windows 10/11, Python 3.11 at
+LOCALAPPDATA\Programs\Python\Python311, Node.js 18 or newer, and Microsoft Edge. It uses the
+Python installation at that path for both the screen-cast GUI and the child simulator. Install
+the project and optional image-capture dependency into that interpreter:
 
-The Windows launcher expects Python 3.11 at `%LOCALAPPDATA%\Programs\Python\Python311`, Node.js,
-Microsoft Edge, the optional `screen-mirror` Python dependencies, and a built `.app` under `out/`.
-Install the Python project and screen-capture extra in the intended environment:
+~~~powershell
+$python = Join-Path $env:LOCALAPPDATA 'Programs\Python\Python311\python.exe'
+& $python -m pip install -e '.[screen-mirror]'
+.\start-tiaotiao-web-simulator.ps1
+~~~
 
-```powershell
-python -m pip install -e ".[screen-mirror]"
-```
+The launcher starts the Node service on loopback port 4183, the Tk screen-cast GUI, the
+policy-driven MuJoCo simulator, and Edge. The screen receiver uses port 18765 and the local
+action bridge uses port 18766. The simulator loads the example app bundle under out.
 
-Copy `web/tiaotiao/.env.example` to `web/tiaotiao/.env` and enter local API credentials there.
-The public example leaves the AI API URL and default model blank. Set OPENAI_API_URL, OPENAI_API_KEY, and OPENAI_MODEL only in the local .env when enabling chat; never commit local credentials.
-Never commit `.env`; use `.env.example` to document variable names without values. Start all
-components with:
+The service and the viewer can also be started independently. To run only the browser app, open
+web/tiaotiao and execute node server.mjs. To start the simulator and screen GUI without the
+browser launcher, use:
 
-```powershell
-./start-tiaotiao-web-simulator.ps1
-```
+~~~powershell
+python assets/jumper/tools/screen_cast.py --standalone --app out/bundle_example/jumper.app
+~~~
 
-The browser opens at `http://127.0.0.1:4183/`. The screen receiver listens on port `18765`, and
-the action bridge listens on `http://127.0.0.1:18766/actions`. Both simulator endpoints bind to
-loopback. The page can also be run without the simulator, but actions then remain unavailable.
+The GUI status line reports simulator startup and the stream endpoint. Click the MuJoCo window
+before typing movement keys. Use W/A/S/D for walking, 1–4 for mapped gestures, Ctrl+1–4 for
+dances, Space for jump, and 0 to end the current action. The optional keypad fallback is shown in
+the GUI. The exact mapping belongs to the example app and its controller configuration.
 
-## Action protocol
+## Desktop screen capture
 
-The model returns a control line followed by speech. The browser removes that line before speech
-playback and sends each step only after the prior simulator action returns:
+The GUI captures a desktop snapshot on a background thread so the window remains responsive.
+Enter the diameter in source pixels, select the left region, then the right region. In each
+selection window, the circle follows the pointer over the visible desktop image. Click once to
+confirm or press Esc to cancel. The square crop inside the circle is resized to 256 by 256 RGB;
+the model's circular surface masks the corners.
 
-```text
+After both regions are selected, start mirroring. The GUI captures at 10 frames per second and
+sends the left and right crops together to the simulator's loopback frame endpoint. Images are
+held in memory and are not written to disk by this capture path. If the monitor layout changes,
+select both regions again.
+
+There is also a browser frame producer: the integrated page renders its current eyes or media
+screens and sends frames to the same simulator receiver at about 12 frames per second. These
+producers overwrite the same pair of textures. Run one producer at a time for a simulator:
+
+- For browser expression sync, open the page with the launcher's sync query and leave desktop
+  capture stopped.
+- For arbitrary desktop regions, run a page without a sync query and start desktop capture from
+  the GUI.
+
+The simulator receiver's health route reports whether a paired frame has arrived. It does not
+identify which producer sent the latest frame.
+
+## Web application
+
+The browser page uses HTML, CSS, and JavaScript without a bundler or npm install step:
+
+| File | Role |
+|---|---|
+| index.html | Eye SVG, music and weather layouts, controls, and debug panel |
+| style.css | Eye geometry, animation, responsive layout, and media views |
+| app.js | Expression state, wake-word recognition, speech synthesis, API calls, screen sync, and action queue |
+| server.mjs | Static server, local configuration, API proxies, response validation, and action normalization |
+| .env.example | Names of optional local settings, with credentials and model left blank |
+
+Copy .env.example to .env inside web/tiaotiao for local configuration. Keep the AI endpoint,
+secret, and model local; the public example does not supply an endpoint or a default model.
+Restart Node after changing its environment. The application recognizes the wake phrase and
+common speech-recognition variants configured in app.js, including 你好跳跳, 你好挑挑, and
+你好调调.
+
+For the browser alone:
+
+~~~powershell
+Set-Location web/tiaotiao
+node --check app.js
+node --check server.mjs
+node server.mjs
+~~~
+
+Speech recognition requires a supported browser and microphone permission. A successful page
+load does not establish that the browser has microphone access or that an upstream service is
+available.
+
+## Sequential action protocol
+
+For a requested robot motion, the assistant response contains one ACTION record followed by
+spoken text. The browser validates the record, removes it from the spoken response, and queues
+each step until the bridge returns:
+
+~~~json
 [[ACTION:{"steps":[
   {"type":"walk","direction":"forward","steps":2},
   {"type":"walk","direction":"left","steps":2},
   {"type":"dance","name":"crab"},
   {"type":"gesture","name":"hello"}
 ]}]]
-收到，我马上执行。
-```
+~~~
 
-Supported steps are:
+Supported types and limits:
 
-| Type | Fields | Behavior |
+| Type | Values | Bridge behavior |
 |---|---|---|
-| `walk` | `direction`: `forward`, `backward`, `left`, `right`; `steps`: 1–10 | Holds the matching W/S/A/D control for about 620 ms per step. |
-| `dance` | `name`: `crab`, `brazilian`, `maze`, `dream_wings` | Starts the mapped Ctrl+1–4 dance and ends it with the existing 0 cancel key after about six seconds. |
-| `gesture` | `name`: `hello`, `bow`, `paw`, `salute` | Starts the mapped 1–4 gesture and ends it with 0 after about 2.2 seconds. |
-| `jump` | none | Starts Space and cancels after about 1.5 seconds. |
-| `stop` | none | Sends the existing 0 action-cancel key. |
+| walk | direction: forward, backward, left, right; steps: 1–10 | Holds W/A/S/D for a bounded time per step |
+| dance | crab, brazilian, maze, dream_wings | Starts the mapped dance and sends cancel after its configured interval |
+| gesture | hello, bow, paw, salute | Starts the mapped gesture and sends cancel after its configured interval |
+| jump | no extra fields | Starts jump and sends cancel after its configured interval |
+| stop | no extra fields | Sends the existing action-cancel key |
 
-The GUI reports action completion from the bridge response and its configured duration. It does
-not claim to read the controller's internal motion-complete event; timings may need adjustment if
-the bundled motion clips or simulator speed change. The bridge is Windows-specific for injected
-keyboard input. Keep action steps bounded and do not add arbitrary shell commands or key names to
-the protocol.
+The bridge validates action types and directions before injecting keys. It binds to loopback and
+uses Windows keyboard injection; it is not a remote API and must not be exposed outside the local
+machine. The browser queue reports request progress and bounded timers. The Rust controller does
+not currently return a per-motion completion event through this bridge.
 
-## Development checks
+The web server also has deterministic parsing for common action phrases if a valid action record
+is missing. This is a fallback for the supported movement and gesture vocabulary, not a general
+language-to-control runtime.
 
-Run these checks after changing the browser or bridge:
+## Checks and troubleshooting
 
-```powershell
+Run the checks relevant to changed files:
+
+~~~powershell
 node --check web/tiaotiao/app.js
 node --check web/tiaotiao/server.mjs
 python -m py_compile assets/jumper/tools/screen_cast.py
-ruff check assets/jumper/tools/screen_cast.py
-```
+python -m ruff check assets/jumper/tools/screen_cast.py
+python -m pytest tests/test_screen_cast.py tests/test_screen_display.py tests/test_web_host.py -q
+~~~
 
-With the launcher running, `GET http://127.0.0.1:18765/health` should report `frame_ready: true`
-after the first mirrored frame. Send a harmless stop step to verify the bridge without moving
-the robot:
+- If the GUI cannot capture a screen, confirm Pillow is installed in the launcher's Python and
+  retry region selection after the monitor layout is stable.
+- If the simulator window does not appear, inspect the GUI status and the output from
+  scripts/play.py; verify the example app exists and the same Python environment has the project
+  dependencies.
+- If a browser frame and desktop crop keep replacing each other, stop one producer. Only one
+  source should write a simulator receiver at a time.
+- If the browser action list stays pending, verify the action bridge is listening on the port
+  derived from the screen sync URL and that the MuJoCo window is open.
+- If voice input is unavailable, use a supported Edge build, grant microphone permission to the
+  local page, and confirm the OS has selected the intended microphone.
 
-```powershell
-Invoke-RestMethod http://127.0.0.1:18766/actions -Method Post `
-  -ContentType 'application/json' -Body '{"type":"stop"}'
-```
-
-Send a continuous phrase to `POST /api/chat` and verify that the returned `ACTION` steps preserve
-the spoken order. For example, “先往前走两步再往左走两步再跳个舞最后再打一下招呼” should
-produce forward, left, dance, and hello steps in that order. The dashboard should show each
-current item and overall completion progress.
-
-## Packaging and credentials
-
-Use the root `package-project.ps1` to create a source archive. It excludes local environment
-files, browser profiles, logs, build caches, and training checkpoints while retaining the project
-source and required example app bundle. Inspect the resulting archive before sharing it. Keep API
-keys in the local `.env` file; if a key was ever committed or distributed, revoke and replace it.
-
-The app's `web/tiaotiao/package-project.ps1` creates a smaller web-only package; it is different
-from the root full-project archive.
+For a full source ZIP, use the repository-root package-project.ps1 script. It excludes .env
+files, local browser profiles, logs, Python caches, checkpoints, and other ZIP archives. Inspect
+the resulting archive before publishing it.

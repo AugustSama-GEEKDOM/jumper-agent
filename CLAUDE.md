@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Jumper Agent is a feature branch derived from [KingKongRobotics/jumper](https://github.com/KingKongRobotics/jumper), adding the Tiaotiao browser face and simulator screen mirroring to the training/deployment project. This file guides repository work; start with the [project guide](docs/PROJECT_GUIDE.md), [development guide](docs/DEVELOPMENT.md), and [web/simulator guide](docs/TIAOTIAO_DEVELOPMENT.md) for branch-specific details.
 
 The reference documents are thorough and worth reading rather than rediscovering:
 [`docs/WORKFLOWS.md`](docs/WORKFLOWS.md) for Train and Design routing from the shared root,

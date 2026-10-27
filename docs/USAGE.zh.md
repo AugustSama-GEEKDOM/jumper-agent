@@ -1,4 +1,4 @@
-<!-- tracks: USAGE.md @ sha256:93c10fdb3a57624c -->
+<!-- tracks: USAGE.md @ sha256:0a54930a5dcdbdba -->
 
 # 手册
 
@@ -45,8 +45,8 @@
 如果还没有克隆仓库：
 
 ```bash
-git clone https://github.com/KingKongRobotics/jumper.git
-cd jumper
+git clone https://github.com/AugustSama-GEEKDOM/jumper-agent.git
+cd jumper-agent
 ```
 
 **2. 在仓库根目录创建并激活一个 venv**：

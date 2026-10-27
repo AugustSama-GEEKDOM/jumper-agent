@@ -1,102 +1,88 @@
-<!-- tracks: PROJECT_GUIDE.md @ sha256:83337a5e4c8afaba -->
+<!-- tracks: PROJECT_GUIDE.md @ sha256:9a363f4e1098bec2 -->
 
-# Jumper 项目指南
+# Jumper Agent 项目指南
 
 [首页](../README.zh.md) · [English](PROJECT_GUIDE.md)
 
-## 从一句话开始
+Jumper Agent 是从 [KingKongRobotics/jumper](https://github.com/KingKongRobotics/jumper) 分支发展
+而来的项目。它把继承而来的机器人训练与仿真代码，与跳跳网页、双圆屏模拟器显示和桌面投屏 GUI
+整合到同一仓库。
 
-环境安装、助手分流和产物检查见[Train 与 Design 工作流](WORKFLOWS.md)。
-一句话启动工作流，过程中可能需要工具、算力或设计选择。外观包目前仅用于显示；导入地图支持
-回放、不支持训练，Train 尚无 `.skin` 加载器。详见[当前集成边界](WORKFLOWS.md#current-integration-boundaries)。
+## 按目标开始
 
-## 试一试
+| 目标 | 从这里开始 |
+|---|---|
+| 在 Windows 启动网页眼睛和模拟器 | [整合演示](TIAOTIAO_DEVELOPMENT.zh.md#windows-整合演示) |
+| 选择两个桌面画面投到模拟器 | [桌面区域投屏](TIAOTIAO_DEVELOPMENT.zh.md#桌面区域投屏) |
+| 在 MuJoCo 中运行动作包 | [使用 app 动作包回放](../deploy/README.md) |
+| 训练策略 | [环境搭建](USAGE.zh.md#环境搭建)，再看[教程](TUTORIAL.zh.md) |
+| 修改网页或服务端 | [网页应用开发](TIAOTIAO_DEVELOPMENT.zh.md#网页应用) |
+| 修改模拟器或屏幕接收端 | [运行组件](DEVELOPMENT.zh.md#运行组件) |
+| 导出到受支持的宿主 | [部署指南](../deploy/README.md) |
 
-需要 Python 3.10–3.13。使用 NVIDIA GPU 时安装 PyTorch 的 GPU 版本；没有 GPU 时安装 CPU
-版本，并选择 native 后端。
+外观与场景生成仍属于独立的
+[jumper-design 仓库](https://github.com/KingKongRobotics/jumper-design)工作流。当前集成边界和准备
+方式见 [WORKFLOWS.md](WORKFLOWS.md)。
 
-```bash
-git clone https://github.com/KingKongRobotics/jumper.git
-cd jumper
-python3 -m venv .venv && source .venv/bin/activate
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128
-pip install -e .
+## 安装训练和模拟器环境
 
+Python 项目支持 3.10 到 3.13。由于本地框架包分布在仓库根目录和 rl 目录中，需要使用 editable
+方式安装。
+
+~~~powershell
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -e '.[dev,screen-mirror]'
 python scripts/train.py --list
-python scripts/train.py --task jumper.tripod
-python scripts/play.py --task jumper.tripod
-```
+~~~
 
-外观和场景工作流使用独立的 [jumper-design 仓库](https://github.com/KingKongRobotics/jumper-design)。
-AI 可以在线读取说明，实际执行时再准备独立的本地副本，详见
-[Design 环境安装](WORKFLOWS.md#design-an-appearance)。动作训练不需要下载 Design 的 LFS 资产。
+当前 Windows 整合启动器会调用 LOCALAPPDATA\Programs\Python\Python311 下的用户级 Python 3.11。
+如果使用其他解释器或虚拟环境，请调整 start-tiaotiao-web-simulator.ps1 中的 Python 路径，
+确保投屏 GUI 和它启动的模拟器子进程都使用已安装本项目的环境。
 
-使用 CPU 训练：
+GPU 训练前，根据本机 CUDA 环境安装对应的 PyTorch。CPU 回放时，投屏 GUI 会使用原生 MuJoCo
+后端启动示例 app。各平台的详细环境步骤见 [AGENT_SETUP.md](AGENT_SETUP.md) 和
+[USAGE.zh.md](USAGE.zh.md)。
 
-```bash
-python scripts/train.py --task jumper.tripod --backend native --device cpu --num_envs 64
-```
+## 配置和启动网页
 
-[环境搭建指南](USAGE.zh.md#环境搭建)覆盖 Linux、macOS 和 Windows，也包含检查 Python、
-PyTorch 或 vendored package 是否装错的方法。[教程](TUTORIAL.zh.md)会把一个策略从训练一路
-带到 bundle。
+网页服务由 Node.js 提供，默认只监听本机回环地址的 4183 端口。安装 Node.js 18 或更新版本；
+需要本地服务配置时，将 web/tiaotiao/.env.example 复制为 web/tiaotiao/.env。公开模板中的 AI
+接口地址、密钥和模型均留空。天气和音乐功能还需要各自服务的凭据。
 
-## 接下来去哪里
+只启动网页：
 
-### 你想训练一个策略
+~~~powershell
+Set-Location web/tiaotiao
+node server.mjs
+~~~
 
-| | |
-|---|---|
-| [环境搭建](USAGE.zh.md#环境搭建) | 从一份全新克隆走到测试全部通过。 |
-| [教程](TUTORIAL.zh.md) | 用一个完整示例走过训练、回放、导出和打包。 |
-| [Colab Notebook](COLAB.zh.md) | 使用云端 GPU 训练，保存检查点并观看无窗口 MP4 回放。 |
-| [手册](USAGE.zh.md) | 命令、任务、资产、场景、默认值、TensorBoard 和续训。 |
-| [控制方式](CONTROLS.zh.md) | 手柄、键盘，以及每种模式如何使用它们。 |
+从仓库根目录运行 start-tiaotiao-web-simulator.ps1，可启动完整 Windows 演示。启动器会打开本机
+网页，并启动模拟器以及仅绑定回环地址的屏幕和动作接口。语音识别使用 Microsoft Edge。
 
-### 你想把它放到机器人上
+## 两个显示屏的用途
 
-| | |
-|---|---|
-| [部署](../deploy/README.zh.md) | 从 checkpoint 到各个宿主，以及每一步在哪里检查。 |
-| [Bundle 格式](../deploy/BUNDLE.md) | App 中的每个文件，以及宿主需要实现的契约。 |
-| [ONNX 转 RKNN](../deploy/convert/README.md) | 把策略转换给板端 NPU。 |
-| [Controller](../deploy/fsm/README.md) | 各宿主共用的 observation、动作解码和状态机。 |
+机器人模型包含两个 0.9 英寸圆形显示面，纹理为 256 × 256 RGB；模拟器 viewer 用模型几何显示圆形
+边界。可使用两种图像来源：
 
-### 你想修改这个项目
+- 网页同步会分别把眼睛、音乐页或天气页渲染成两个圆屏画面。
+- 桌面投屏会捕获两个自行选择的桌面区域，并将 RGB 裁剪图传给模拟器。
 
-| | |
-|---|---|
-| [参与开发](../CONTRIBUTING.md) | 环境、测试、仓库结构，以及新代码应该放在哪里。 |
-| [设计](DESIGN.md) | 框架为什么这样组织，以及实测结果说明了什么。 |
-| [Vendored 代码](VENDOR.md) | 本地 mjlab、rsl_rl 副本的来源和改动。 |
+两种来源都会写入模拟器显示帧，因此同一个模拟器接收端一次只启用一个图像来源。两条数据流和
+相关端点见[网页与模拟器指南](TIAOTIAO_DEVELOPMENT.zh.md)。纹理不会进入策略观测，也不是
+真实硬件显示协议。
 
-## 内部原理
+## 继续阅读专项指南
 
-同一套任务配置、奖励和 PPO 代码运行在两个物理后端之上。MuJoCo Warp 是主要的 GPU 训练后端；
-原生 MuJoCo 把多个环境分给不同 CPU 线程。框架只用一道很小的接缝替换仿真器，manager 和学习层
-保持不变。
+- [训练命令和资源](USAGE.zh.md)
+- [从训练到动作包的完整示例](TUTORIAL.zh.md)
+- [键盘和手柄控制](CONTROLS.zh.md)
+- [屏幕投屏实现](SCREEN_MIRROR.md)
+- [仓库开发与验证](DEVELOPMENT.zh.md)
+- [控制器部署](../deploy/README.md)
 
-导出的策略会和 `deploy/fsm` 汇合。后者是同一个 Rust controller，分别为机器人板端、浏览器和
-`play --app` 编译。一个 bundle 携带这些 runtime、每种模式的策略、控制映射和参考帧，让所有
-宿主检查同一组输入与输出。
+## 许可证与项目边界
 
-Jumper 本身位于 `assets/jumper/jumper.xml`，包含舵机曲线、dToF 传感器和机载相机。场景可以把
-它放到摄影棚地面、崎岖地面、冰面、台阶或绳索秋千上。
-
-## 项目状态
-
-训练、仿真、导出和宿主侧 bundle 检查已经实现，并由测试套件覆盖。真实硬件是另一条边界：
-RKNN 推理尚未在板端验证，1 kHz controller 循环也尚未真正驱动电机总线。当前硬件缺口记录在
-[部署文档的 Open 部分](../deploy/README.md#open)，仿真器之间的差异记录在
-[Known asymmetries](DESIGN.md#9-known-asymmetries)。
-
-## 相关项目
-
-- [mjlab](https://github.com/mujocolab/mjlab) —— 本项目所基于的 MuJoCo 训练框架
-- [rsl_rl](https://github.com/leggedrobotics/rsl_rl) —— PPO
-- [MuJoCo](https://github.com/google-deepmind/mujoco) 和
-  [MuJoCo Warp](https://github.com/google-deepmind/mujoco_warp) —— 两个物理后端
-
-## 许可证
-
-Apache License 2.0 —— 见 [`LICENSE`](../LICENSE)。第三方材料及其许可证列在 [`NOTICE`](../NOTICE)。
+Jumper Agent 是 Jumper 上游项目的一个分支，并增加了网页及模拟器整合功能。项目许可证和第三方
+声明见 [LICENSE](../LICENSE) 与 [NOTICE](../NOTICE)。训练输出、下载的媒体、外部服务返回结果和
+实体机器人的行为可能分别受其来源及许可证约束。

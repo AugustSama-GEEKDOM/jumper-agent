@@ -454,7 +454,7 @@ def build_record(commit: str, cli: str) -> dict:
     commit.
     """
     return {
-        "source": {"repo": "KingKongRobotics/jumper", "path": "deploy/fsm", "commit": commit},
+        "source": {"repo": "AugustSama-GEEKDOM/jumper-agent", "path": "deploy/fsm", "commit": commit},
         "build": {
             "tool": "scripts/deploy.py",
             "cargo": f"build --release --target wasm32-unknown-unknown "

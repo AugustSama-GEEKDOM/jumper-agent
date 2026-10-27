@@ -1,70 +1,80 @@
-![Jumper](docs/media/jumper-hero-en.png)
+![Jumper Agent](docs/media/jumper-hero-en.png)
 
-# Jumper
+# Jumper Agent
 
 **English** | [简体中文](README.zh.md)
 
-**Jumper is a 22-DoF crab robot.** [View hardware →](docs/HARDWARE.md)
+> **Project lineage:** Jumper Agent is a feature branch derived from
+> [KingKongRobotics/jumper](https://github.com/KingKongRobotics/jumper). It keeps the
+> robot-training and MuJoCo simulation foundation and adds the Tiaotiao browser face,
+> dual-screen mirroring, and local AI action control.
 
-This repo is Jumper’s AI toolkit for appearance, motion, and scene creation. Open this repo in an AI coding assistant and try the prompts below.
+Jumper Agent brings the robot model, motion tools, simulator, browser eyes, and desktop
+screen-casting workflow together in one repository. The repository is
+[AugustSama-GEEKDOM/jumper-agent](https://github.com/AugustSama-GEEKDOM/jumper-agent).
 
-> 🦀 **Get a free Jumper!** [Find out how →](https://beunlimited.me/zh/events/crab-robot-challenge-2026)
+## What is included
 
-## One sentence to design an appearance
+- A 22-joint Jumper model, MuJoCo scenes, locomotion and motion tasks, training, replay,
+  policy export, and controller bundles.
+- A policy-driven desktop simulator. Its model has two circular, render-only screens sized
+  to match the robot's 0.9-inch displays.
+- A Windows GUI for selecting two circular areas of the desktop and streaming them into the
+  simulator screens.
+- The Tiaotiao browser face, with animated expressions, voice interaction, weather and music
+  views, plus a browser-to-simulator face sync.
+- An optional AI action queue. It can execute bounded movement and built-in motions in
+  sequence and show progress in the browser.
 
-> Design a warm sand ranger appearance for Jumper with coordinated body and limb colors, then export a `.skin`.
+Screen mirroring is for the simulator display textures; it does not add a camera observation
+or a hardware display transport. The AI action bridge is local simulator control, not a robot
+hardware API.
 
-| | | |
-|:-:|:-:|:-:|
-| ![Warm sand ranger appearance](docs/media/design-warm-sand.png) | ![Silver armor appearance](docs/media/design-silver-armor.png) | ![Raphael Turtle appearance](docs/media/design-raphael.png) |
-| [**Warm sand ranger**](https://github.com/KingKongRobotics/jumper-design/blob/be74e0f2e5e2433d24a3a7b1c1aa0dbeae480356/library/skins/warm-sand-ranger-integrated-v2.skin) | [**Silver armor**](https://github.com/KingKongRobotics/jumper-design/blob/be74e0f2e5e2433d24a3a7b1c1aa0dbeae480356/library/skins/mecha-tripo-v3.skin) | [**Raphael Turtle**](https://github.com/KingKongRobotics/jumper-design/blob/be74e0f2e5e2433d24a3a7b1c1aa0dbeae480356/library/skins/raphael-turtle-v1.skin) |
+## Start the integrated Windows demo
 
-[Browse all skins](https://github.com/KingKongRobotics/jumper-design/tree/main/library/skins)
+The integrated launcher expects Windows 10/11, Python 3.11 at the standard per-user install
+location, Node.js 18 or newer, Microsoft Edge, and a usable example bundle under
+the repository's out directory. Install the Python dependencies into the same Python 3.11
+installation that the launcher uses:
 
-## One sentence to train a motion
+~~~powershell
+$python = Join-Path $env:LOCALAPPDATA 'Programs\Python\Python311\python.exe'
+& $python -m pip install -e '.[screen-mirror]'
+.\start-tiaotiao-web-simulator.ps1
+~~~
 
-> Train a stable tripod gait for Jumper, replay and evaluate the result, then package it as an `.app`.
+The browser opens on the local web app. The launcher starts the simulator and the screen-cast
+window as well. Use the GUI to enter the source-circle diameter, select the two screen areas,
+and start desktop mirroring. See the [integrated demo guide](docs/TIAOTIAO_DEVELOPMENT.md) for
+configuration, controls, and troubleshooting.
 
-| | | |
-|:-:|:-:|:-:|
-| ![Jumper walking](docs/media/walk.gif) | ![Jumper changing posture](docs/media/posture.gif) | ![Jumper waving](docs/media/gesture.gif) |
-| **Walk** | **Posture** | **Gesture** |
-| ![Dance simulation](docs/media/dance.gif)<br>![Dance website showcase](docs/media/official-dance.gif) | ![Jump simulation](docs/media/jump.gif)<br>![Jump website showcase](docs/media/official-jump.gif) | ![Grasp simulation](docs/media/claw.gif)<br>![Grasp website showcase](docs/media/official-grasp.gif) |
-| **Dance** | **Jump** | **Grasp** |
+## Train or replay a motion
 
-## One sentence to create a scene
+Create an environment appropriate for your CPU or NVIDIA GPU, then install this checkout:
 
-> Create a park pump-track scene for Jumper with rolling terrain, trees and benches, then export a `.map`.
+~~~bash
+python -m venv .venv
+python -m pip install -e '.[dev]'
+python scripts/train.py --list
+python scripts/play.py --task jumper.tripod
+~~~
 
-| | | |
-|:-:|:-:|:-:|
-| ![Park pump track scene](docs/media/design-park.png) | ![Bedroom scene](docs/media/design-bedroom.png) | ![Soccer scene](docs/media/design-soccer.png) |
-| [**Park pump track**](https://github.com/KingKongRobotics/jumper-design/blob/be74e0f2e5e2433d24a3a7b1c1aa0dbeae480356/library/maps/park-pump-track.map) | [**Bedroom**](https://github.com/KingKongRobotics/jumper-design/blob/be74e0f2e5e2433d24a3a7b1c1aa0dbeae480356/library/maps/bedroom.map) | [**Soccer**](https://github.com/KingKongRobotics/jumper-design/blob/be74e0f2e5e2433d24a3a7b1c1aa0dbeae480356/library/maps/soccer.map) |
+See the [project guide](docs/PROJECT_GUIDE.md) for setup routes and the
+[development guide](docs/DEVELOPMENT.md) for repository structure and validation.
 
-[Browse all maps](https://github.com/KingKongRobotics/jumper-design/tree/main/library/maps)
+## Documentation
 
-## Where to find things
-
-| Resource | Purpose |
+| Guide | What it covers |
 |---|---|
-| [jumper-design](https://github.com/KingKongRobotics/jumper-design) | Appearance and scene creation; your assistant reads its [instructions](https://github.com/KingKongRobotics/jumper-design/blob/main/AGENTS.md) and uses its tools as needed. |
-| [Training tutorial](docs/TUTORIAL.md) | Motion training, replay and policy export in this repository. |
-| [Colab training](docs/COLAB.md) | GPU training in a notebook, checkpoint backup, resume, ONNX export and MP4 simulation replay. |
-| [Motion bundles](deploy/BUNDLE.md) | Package trained motions and their controller as an `.app`; see the [build guide](deploy/README.md) for prerequisites. |
-| [Project guide](docs/PROJECT_GUIDE.md) | Setup, current capabilities and further documentation. |
-| [Tiaotiao development](docs/TIAOTIAO_DEVELOPMENT.md) | Browser/simulator architecture, AI action protocol, development checks and packaging. |
+| [Project guide](docs/PROJECT_GUIDE.md) | Getting started, main project areas, and choosing a workflow |
+| [Development guide](docs/DEVELOPMENT.md) | Architecture, local checks, packaging, and contribution flow |
+| [Web and simulator guide](docs/TIAOTIAO_DEVELOPMENT.md) | Browser face, screen capture, action queue, and Windows launcher |
+| [Screen mirroring details](docs/SCREEN_MIRROR.md) | Display geometry, stream formats, and simulator receiver |
+| [Training usage](docs/USAGE.md) | Training commands, tasks, assets, and configuration |
+| [Deployment](deploy/README.md) | Exported controller bundles and the hardware path |
 
-Training builds on [mjlab](https://github.com/mujocolab/mjlab),
-[rsl_rl](https://github.com/leggedrobotics/rsl_rl), [MuJoCo](https://github.com/google-deepmind/mujoco)
-and [MuJoCo Warp](https://github.com/google-deepmind/mujoco_warp).
-Example appearance and scene images come from jumper-design; [image sources](docs/media/DESIGN_SOURCES.md)
-and [third-party notices](NOTICE) record attribution.
+## License and notices
 
-## License
-
-Copyright 2026 KingKong Robotics.
-
-Maintainer-owned project materials are licensed under Apache-2.0. See [LICENSE](LICENSE),
-[NOTICE](NOTICE), and [licensing details](docs/PROJECT_GUIDE.md#license).
-Third-party materials remain under their respective terms, and generated outputs do not
-automatically inherit this repository's license.
+Project-owned material is covered by [LICENSE](LICENSE). Review [NOTICE](NOTICE) for
+third-party components and media. A derived output does not automatically inherit the
+repository's license.

@@ -1,5 +1,12 @@
 # AGENTS.md
 
+This repository is **Jumper Agent**, a feature branch derived from
+[KingKongRobotics/jumper](https://github.com/KingKongRobotics/jumper). It keeps the upstream
+training, simulation, and deployment foundation and adds the Tiaotiao browser face, desktop
+screen mirroring, and local simulator action integration. Use
+[\`docs/PROJECT_GUIDE.md\`](docs/PROJECT_GUIDE.md) for the branch-specific project map and
+[\`docs/DEVELOPMENT.md\`](docs/DEVELOPMENT.md) for its architecture and validation.
+
 The working rules for this repository live in [`CLAUDE.md`](CLAUDE.md) — commands, the
 architecture worth knowing before editing, and the conventions that are not visible from any one
 file. They are not Claude-specific; read that file first whatever agent you are.

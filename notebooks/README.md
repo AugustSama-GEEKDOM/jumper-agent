@@ -1,6 +1,6 @@
 # Jumper on Colab
 
-[Open in Colab](https://colab.research.google.com/github/KingKongRobotics/jumper/blob/main/notebooks/jumper_colab.ipynb)
+[Open in Colab](https://colab.research.google.com/github/AugustSama-GEEKDOM/jumper-agent/blob/main/notebooks/jumper_colab.ipynb)
 · [中文](README.zh.md) · [Full guide](../docs/COLAB.md)
 
 Train with a Colab GPU, inspect the curves, replay the policy in MuJoCo, and

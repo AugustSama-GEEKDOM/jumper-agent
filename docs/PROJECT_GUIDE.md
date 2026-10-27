@@ -1,104 +1,95 @@
-# Jumper project guide
+# Jumper Agent project guide
 
-[Home](../README.md) · [中文](PROJECT_GUIDE.zh.md)
+[Home](../README.md) · [简体中文](PROJECT_GUIDE.zh.md)
 
-## Start from a prompt
+Jumper Agent is a feature branch derived from
+[KingKongRobotics/jumper](https://github.com/KingKongRobotics/jumper). It brings the inherited
+robot-training and simulation code together with the Tiaotiao web app, the two-screen simulator
+display, and the desktop mirroring GUI.
 
-Follow [Train and Design workflows](WORKFLOWS.md) for setup, agent routing and package checks.
-A prompt starts a workflow and may require tools, compute or a design choice. Skins are
-currently display-only; imported maps work in replay but not training, and Train has no
-`.skin` loader. See [integration boundaries](WORKFLOWS.md#current-integration-boundaries).
+## Pick a starting point
 
-## Try it
+| Goal | Start here |
+|---|---|
+| Launch the web eyes and simulator on Windows | [Integrated demo](TIAOTIAO_DEVELOPMENT.md#windows-integrated-demo) |
+| Select two desktop areas for the simulated displays | [Screen capture workflow](TIAOTIAO_DEVELOPMENT.md#desktop-screen-capture) |
+| Run a motion bundle in MuJoCo | [Replay with an app bundle](../deploy/README.md) |
+| Train a policy | [Environment setup](USAGE.md#setting-up), then [the tutorial](TUTORIAL.md) |
+| Change the browser face or its server | [Web development](TIAOTIAO_DEVELOPMENT.md#web-application) |
+| Change the simulator or screen receiver | [Architecture](DEVELOPMENT.md#runtime-components) |
+| Export for a supported host | [Deployment guide](../deploy/README.md) |
 
-Python 3.10–3.13 is required. On an NVIDIA machine, install the GPU build of PyTorch; without
-one, install the CPU build and select the native backend.
+Appearance and scene generation remain a separate workflow in the independent
+[jumper-design repository](https://github.com/KingKongRobotics/jumper-design). The current
+integration boundary and its setup instructions are recorded in [WORKFLOWS.md](WORKFLOWS.md).
 
-```bash
-git clone https://github.com/KingKongRobotics/jumper.git
-cd jumper
-python3 -m venv .venv && source .venv/bin/activate
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128
-pip install -e .
+## Install the training and simulator environment
 
+The Python project supports Python 3.10 through 3.13. An editable install is required because
+the local framework packages are split between the repository root and rl.
+
+~~~powershell
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -e '.[dev,screen-mirror]'
 python scripts/train.py --list
-python scripts/train.py --task jumper.tripod
-python scripts/play.py --task jumper.tripod
-```
+~~~
 
-Appearance and scene workflows use the independent
-[jumper-design repository](https://github.com/KingKongRobotics/jumper-design).
-An assistant can read its instructions remotely and prepare a separate checkout when needed;
-see [Design setup](WORKFLOWS.md#design-an-appearance). Train does not require its LFS assets.
+The desktop integrated launcher currently invokes the per-user Python 3.11 installation at
+LOCALAPPDATA\Programs\Python\Python311. If using a different interpreter or virtual environment,
+adjust the Python path in start-tiaotiao-web-simulator.ps1 so the GUI and its simulator child
+use the environment where this repository was installed.
 
-For CPU training:
+For GPU training, install a PyTorch build that matches the local CUDA setup before installing the
+project. For CPU-only replay, the screen-cast GUI starts the sample app with the native MuJoCo
+backend. Consult [AGENT_SETUP.md](AGENT_SETUP.md) and [USAGE.md](USAGE.md) for platform-specific
+environment details.
 
-```bash
-python scripts/train.py --task jumper.tripod --backend native --device cpu --num_envs 64
-```
+## Configure and launch the browser app
 
-The [setup guide](USAGE.md#setting-up) covers Linux, macOS and Windows, including the
-checks that catch an incorrect Python, PyTorch or vendored-package installation. The
-[tutorial](TUTORIAL.md) follows one policy all the way from training to a bundle.
+The web application is served by Node.js and listens on loopback port 4183 by default. Install
+Node.js 18 or newer, then copy web/tiaotiao/.env.example to web/tiaotiao/.env if local API
+configuration is needed. The public example leaves the AI endpoint, key, and model blank.
+Weather and music also require the credentials for their respective providers.
 
-## Where to go next
+To run only the web app:
 
-### You want to train a policy
+~~~powershell
+Set-Location web/tiaotiao
+node server.mjs
+~~~
 
-| | |
-|---|---|
-| [Setup](USAGE.md#setting-up) | Bring a machine from a fresh clone to a passing test suite. |
-| [Tutorial](TUTORIAL.md) | Train, replay, export and bundle a worked example. |
-| [Colab notebook](COLAB.md) | Train on a hosted GPU, preserve checkpoints and watch headless MP4 replays. |
-| [Manual](USAGE.md) | Commands, tasks, assets, scenes, defaults, TensorBoard and resuming. |
-| [Controls](CONTROLS.md) | The gamepad, the keyboard and what each mode does with them. |
+To run the full Windows demo from the repository root, use
+start-tiaotiao-web-simulator.ps1. The launcher opens the local web page and starts the simulator
+with its screen and action endpoints bound to loopback. Microsoft Edge is used for browser speech
+recognition and the page launcher.
 
-### You want to put it on a robot
+## How the two displays are used
 
-| | |
-|---|---|
-| [Deployment](../deploy/README.md) | The path from a checkpoint to each host, and what is checked where. |
-| [Bundle format](../deploy/BUNDLE.md) | Every file in an app and the contract a host implements. |
-| [ONNX to RKNN](../deploy/convert/README.md) | Convert a policy for the board's NPU. |
-| [Controller](../deploy/fsm/README.md) | The observation, action decode and state machine shared by every host. |
+The robot model includes two 0.9-inch circular display surfaces with 256 by 256 RGB textures.
+The simulator viewer applies the circular mask. There are two ways to supply the images:
 
-### You want to change the project
+- Browser sync renders each eye, music view, or weather view into a separate round-screen frame.
+- Desktop mirroring captures two selected desktop regions and sends their RGB crops to the
+  simulator receiver.
 
-| | |
-|---|---|
-| [Contributing](../CONTRIBUTING.md) | Setup, tests, repository layout and where new code belongs. |
-| [Design](DESIGN.md) | Why the framework is shaped this way and what the measurements say. |
-| [Vendored code](VENDOR.md) | The local mjlab and rsl_rl copies, their provenance and their changes. |
+Both sources write simulator display frames. Use only one active producer for a given simulator
+receiver at a time. The [web and simulator guide](TIAOTIAO_DEVELOPMENT.md) explains both paths
+and the frame endpoints. The textures do not feed the policy observation and are not a hardware
+display protocol.
 
-## Under the hood
+## Continue into a focused workflow
 
-The same task configurations, rewards and PPO code run over two physics backends. MuJoCo Warp
-is the primary GPU trainer; native MuJoCo spreads environments across CPU threads. One small
-seam swaps the simulator while the manager and learning layers stay unchanged.
+- [Training commands and assets](USAGE.md)
+- [A train-to-bundle walkthrough](TUTORIAL.md)
+- [Keyboard and gamepad controls](CONTROLS.md)
+- [Screen mirroring implementation](SCREEN_MIRROR.md)
+- [Repository development and validation](DEVELOPMENT.md)
+- [Controller deployment](../deploy/README.md)
 
-The exported policy joins `deploy/fsm`, one Rust controller compiled for the robot board, a
-browser and `play --app`. A bundle carries those runtimes, one policy per mode, the control
-map and reference frames that let every host check the same inputs and outputs.
+## License and project boundaries
 
-Jumper itself lives in `assets/jumper/jumper.xml`, with its servo curve, dToF sensor and
-onboard camera. Scenes put it on a studio floor, rough ground, ice, stairs or a rope swing.
-
-## Project status
-
-Training, simulation, export and host-side bundle checks are implemented and covered by the
-test suite. Real-hardware work is a separate boundary: RKNN inference has not yet been
-verified on the board, and the 1 kHz controller loop has not yet driven the live motor bus.
-The current hardware gaps are tracked in [Deployment — Open](../deploy/README.md#open); simulator
-differences are recorded under [Known asymmetries](DESIGN.md#9-known-asymmetries).
-
-## Related projects
-
-- [mjlab](https://github.com/mujocolab/mjlab) — the MuJoCo training framework this builds on
-- [rsl_rl](https://github.com/leggedrobotics/rsl_rl) — PPO
-- [MuJoCo](https://github.com/google-deepmind/mujoco) and
-  [MuJoCo Warp](https://github.com/google-deepmind/mujoco_warp) — the two physics backends
-
-## License
-
-Apache License 2.0 — see [`LICENSE`](../LICENSE). Third-party material and its licences are listed
-in [`NOTICE`](../NOTICE).
+Jumper Agent is a branch of the upstream Jumper project, with additional browser and simulator
+integration. Project licensing and third-party notices are in [LICENSE](../LICENSE) and
+[NOTICE](../NOTICE). Training output, downloaded media, external service responses, and physical
+robot behavior have their own provenance and licensing considerations.

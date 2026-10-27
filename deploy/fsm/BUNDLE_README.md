@@ -1,6 +1,6 @@
 # {BUNDLE}
 
-A robot controller and the policies it runs, exported from KingKongRobotics/jumper -- one
+A robot controller and the policies it runs, exported from AugustSama-GEEKDOM/jumper-agent -- one
 bundle for every host: the robot's board, a browser, and `play`.
 
 ```
@@ -13,7 +13,7 @@ bundle.json                       every file, its size and its SHA-256, and whic
 `manual.en.json` is written by the build from the controller's own account of
 its pad and its keys, so it describes exactly the bindings here. A translation travels
 beside it as `manual.<language>.json` -- `manual.zh.json` in Chinese -- listed
-in `bundle.json`'s `manuals`. `deploy/app.schema` in KingKongRobotics/jumper describes every
+in `bundle.json`'s `manuals`. `deploy/app.schema` in AugustSama-GEEKDOM/jumper-agent describes every
 file a bundle may hold and the format of each, and every build is checked
 against it.
 
@@ -50,7 +50,7 @@ Everything else comes from the contracts here, and `--dry-run` prints what it
 will use -- the DDS domains, the QoS file, each mode's controls as its contract
 gives them -- and every note and stub.
 
-With `play`, from KingKongRobotics/jumper -- every mode, on this bundle's own keys and a
+With `play`, from AugustSama-GEEKDOM/jumper-agent -- every mode, on this bundle's own keys and a
 gamepad, the controller's own joint targets driving the simulated servos:
 
 ```bash
@@ -375,4 +375,4 @@ loader error nobody can read.
 
 ---
 
-Built by `scripts/deploy.py` from KingKongRobotics/jumper `{COMMIT}`.
+Built by `scripts/deploy.py` from AugustSama-GEEKDOM/jumper-agent `{COMMIT}`.

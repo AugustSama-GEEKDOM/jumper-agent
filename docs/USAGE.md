@@ -47,8 +47,8 @@ prerequisite.
 If you have not cloned the repository yet:
 
 ```bash
-git clone https://github.com/KingKongRobotics/jumper.git
-cd jumper
+git clone https://github.com/AugustSama-GEEKDOM/jumper-agent.git
+cd jumper-agent
 ```
 
 **2. Create and activate a venv** at the repository root:
