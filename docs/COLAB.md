@@ -6,9 +6,9 @@
 Train on a Colab GPU, inspect progress, replay in MuJoCo, export ONNX and keep a
 portable backup. Your computer only needs a browser.
 
-[Open in Colab](https://colab.research.google.com/github/AugustSama-GEEKDOM/jumper-agent/blob/main/notebooks/jumper_colab.ipynb),
+[Open in Colab](https://colab.research.google.com/github/AugustSama-GEEKDOM/jumper-agent/blob/jumper-agent/notebooks/jumper_colab.ipynb),
 save a copy and select a GPU runtime. The link and the notebook's defaults use
-this repository's `main`; the advanced source settings take another repository
+this repository's `jumper-agent` branch; the advanced source settings take another repository
 or revision.
 
 ## New training or continue training

@@ -1,4 +1,4 @@
-<!-- tracks: COLAB.md @ sha256:24043bd63fe97c0b -->
+<!-- tracks: COLAB.md @ sha256:23b62a0af9232a34 -->
 
 # 在 Google Colab 中运行 Jumper
 
@@ -8,8 +8,8 @@
 用 Colab GPU 训练、查看进展、在 MuJoCo 中回放、导出 ONNX，再保存备份。
 你的电脑只需要浏览器。
 
-[在 Colab 中打开](https://colab.research.google.com/github/AugustSama-GEEKDOM/jumper-agent/blob/main/notebooks/jumper_colab.ipynb)，
-保存副本并选择 GPU 运行时。链接和 Notebook 的默认值都使用本仓库的 `main`；高级源码设置
+[在 Colab 中打开](https://colab.research.google.com/github/AugustSama-GEEKDOM/jumper-agent/blob/jumper-agent/notebooks/jumper_colab.ipynb)，
+保存副本并选择 GPU 运行时。链接和 Notebook 的默认值都使用本仓库的 `jumper-agent` 分支；高级源码设置
 可以指定别的仓库或提交。
 
 ## 新训练或继续训练

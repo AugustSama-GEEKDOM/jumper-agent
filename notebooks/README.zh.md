@@ -1,8 +1,8 @@
-<!-- tracks: README.md @ sha256:b21b6ed89ae1ba3d -->
+<!-- tracks: README.md @ sha256:8431a90b4b7b6e8a -->
 
 # 在 Colab 上运行 Jumper
 
-[在 Colab 中打开](https://colab.research.google.com/github/AugustSama-GEEKDOM/jumper-agent/blob/main/notebooks/jumper_colab.ipynb)
+[在 Colab 中打开](https://colab.research.google.com/github/AugustSama-GEEKDOM/jumper-agent/blob/jumper-agent/notebooks/jumper_colab.ipynb)
 · [English](README.md) · [完整指南](../docs/COLAB.zh.md)
 
 用 Colab GPU 训练，查看曲线，在 MuJoCo 中回放策略，再下载结果。你的电脑只需要浏览器。
