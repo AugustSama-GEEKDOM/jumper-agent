@@ -1,0 +1,6 @@
+.env
+node_modules/
+npm-debug.log*
+.video-render/
+dist/
+*.zip

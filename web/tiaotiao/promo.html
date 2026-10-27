@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>跳跳 · Motion Reel</title>
+  <link rel="stylesheet" href="promo.css">
+</head>
+<body>
+  <main id="promo" aria-label="跳跳机器人智能体概念宣传片">
+    <canvas id="fx" width="1920" height="1080" aria-hidden="true"></canvas>
+    <div class="grid-floor" aria-hidden="true"></div>
+    <div class="ambient ambient-a" aria-hidden="true"></div>
+    <div class="ambient ambient-b" aria-hidden="true"></div>
+
+    <section class="scene opening" data-scene="opening">
+      <div class="opening-index">TIAOTIAO <span>/</span> MOTION REEL 2026</div>
+      <div class="opening-copy">
+        <p class="kicker">A ROBOT WITH A SOUL</p>
+        <h1><span>有些智能</span><br><em>值得被看见。</em></h1>
+      </div>
+      <div class="opening-seal"><i></i><span>01 — 09</span></div>
+      <div class="opening-line"></div>
+    </section>
+
+    <section class="scene presence" data-scene="presence">
+      <div class="scene-label"><span>01</span> PRESENCE</div>
+      <div class="presence-copy">
+        <p class="kicker">你好，跳跳</p>
+        <h2>它，会用眼睛<br><em>回应你。</em></h2>
+        <p class="body-copy">不只是显示。是一次注视，一点好奇，<br>和属于它的情绪。</p>
+      </div>
+      <div class="presence-tags"><span>观察</span><span>聆听</span><span>回应</span></div>
+      <div class="hero-eyes hero-eyes-main" id="hero-eyes-presence" aria-hidden="true"></div>
+      <div class="hero-halo"></div>
+      <div class="listen-status"><i></i><span>LISTENING</span><b>00:03</b></div>
+    </section>
+
+    <section class="scene weather" data-scene="weather">
+      <div class="scene-label"><span>02</span> SENSE THE WORLD</div>
+      <div class="weather-orbit orbit-ring-a"></div>
+      <div class="weather-orbit orbit-ring-b"></div>
+      <div class="weather-left">
+        <div class="weather-disc">
+          <div class="sun-rays"></div>
+          <svg class="weather-glyph" viewBox="0 0 240 240" aria-hidden="true">
+            <defs>
+              <linearGradient id="sunFill" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#e8fdff"/><stop offset=".55" stop-color="#88e4f5"/><stop offset="1" stop-color="#3e91aa"/>
+              </linearGradient>
+            </defs>
+            <circle cx="120" cy="120" r="47" fill="url(#sunFill)"/>
+            <g stroke="#a8edfa" stroke-width="3" stroke-linecap="round" opacity=".82">
+              <path d="M120 31v20M120 189v20M31 120h20M189 120h20M57 57l14 14M169 169l14 14M183 57l-14 14M71 169l-14 14"/>
+            </g>
+            <path d="M73 164h82a23 23 0 0 0 0-46 38 38 0 0 0-72-6 28 28 0 0 0-10 52Z" fill="#08222c" stroke="#8de5f5" stroke-width="2" opacity=".82"/>
+          </svg>
+          <div class="disc-ring"></div>
+        </div>
+        <p class="data-kicker">LIVE WEATHER / XUZHOU</p>
+      </div>
+      <div class="weather-right">
+        <p class="micro-label">当前天气</p>
+        <div class="weather-temp"><b>26</b><sup>°</sup></div>
+        <div class="weather-row"><span>徐州 · 云龙区</span><span>晴</span></div>
+        <div class="weather-rule"></div>
+        <div class="weather-metrics">
+          <div><small>体感</small><strong>27°</strong></div>
+          <div><small>湿度</small><strong>48%</strong></div>
+          <div><small>风向</small><strong>东南</strong></div>
+        </div>
+        <p class="weather-advice">适合出门走走，记得带上好心情。</p>
+      </div>
+      <div class="weather-caption"><span>“今天徐州天气怎么样？”</span><b>感知，不只是看见。</b></div>
+    </section>
+
+    <section class="scene music" data-scene="music">
+      <div class="scene-label"><span>03</span> FEEL THE RHYTHM</div>
+      <div class="music-disc-wrap">
+        <div class="music-disc" id="music-disc">
+          <div class="vinyl-grooves"></div>
+          <div class="album-art">
+            <span>星际来信</span>
+            <small>TIAOTIAO SELECTS</small>
+          </div>
+          <div class="disc-center"></div>
+          <div class="disc-sheen"></div>
+        </div>
+        <div class="music-needle"></div>
+      </div>
+      <div class="music-info">
+        <p class="micro-label">NOW PLAYING</p>
+        <h2>星际来信</h2>
+        <p class="artist">跳跳推荐 · 夜间漫游</p>
+        <div class="waveform" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
+        <div class="lyric-window">
+          <span class="lyric-ghost">沿着星光向前走</span>
+          <span class="lyric-live">沿着星光向前走</span>
+        </div>
+        <div class="time-row"><span>01:24</span><div class="track"><i></i></div><span>03:48</span></div>
+      </div>
+      <div class="music-caption"><span>“我想听点放松的音乐。”</span><b>听见的，不只是声音。</b></div>
+    </section>
+
+    <section class="scene action" data-scene="action">
+      <div class="scene-label"><span>04</span> FROM WORDS TO MOTION</div>
+      <div class="action-copy">
+        <p class="kicker">一句话，就是一次行动</p>
+        <h2>说出口的<br><em>都能做到。</em></h2>
+        <div class="command-list">
+          <div class="command active" data-command="dance"><span>01</span><b>跳个舞</b><small>DANCE</small></div>
+          <div class="command" data-command="walk"><span>02</span><b>向前走几步</b><small>STEP FORWARD</small></div>
+          <div class="command" data-command="handshake"><span>03</span><b>握个手</b><small>SHAKE HANDS</small></div>
+        </div>
+      </div>
+      <div class="robot-stage">
+        <div class="robot-glow"></div>
+        <div class="robot" id="robot">
+          <div class="robot-antenna"></div>
+          <div class="robot-head">
+            <div class="robot-face" id="robot-eyes"></div>
+            <div class="head-shine"></div>
+          </div>
+          <div class="robot-neck"></div>
+          <div class="robot-body">
+            <div class="chest-light"></div>
+            <div class="chest-mark">T / 01</div>
+          </div>
+          <div class="robot-arm arm-left"><i></i><b></b></div>
+          <div class="robot-arm arm-right"><i></i><b></b></div>
+          <div class="robot-leg leg-left"><i></i><b></b></div>
+          <div class="robot-leg leg-right"><i></i><b></b></div>
+        </div>
+        <div class="motion-arc arc-a"></div>
+        <div class="motion-arc arc-b"></div>
+        <div class="motion-arc arc-c"></div>
+        <div class="floor-ring"></div>
+      </div>
+      <div class="reply-chip" id="reply-chip">收到。</div>
+      <div class="action-caption"><span>语音，就是最自然的遥控器。</span><b>声音 → 理解 → 动作</b></div>
+    </section>
+
+    <section class="scene agent" data-scene="agent">
+      <div class="scene-label"><span>05</span> AGENT IN MOTION</div>
+      <div class="agent-copy">
+        <p class="kicker">它不只回答问题</p>
+        <h2>它开始<br><em>完成事情。</em></h2>
+        <p class="body-copy">听懂意图，连接能力，<br>把一句话拆成一条可执行的路径。</p>
+      </div>
+      <div class="prompt-card">
+        <div class="prompt-head"><i></i><span>VOICE INPUT</span><b>00:03</b></div>
+        <p>“如果今天不下雨，放首歌，<br>带我走两步。”</p>
+        <div class="prompt-wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+      <div class="agent-core">
+        <div class="core-ring ring-1"></div>
+        <div class="core-ring ring-2"></div>
+        <div class="core-ring ring-3"></div>
+        <div class="core-eye" id="agent-eyes"></div>
+        <div class="core-label">TIAOTIAO<br><span>AGENT CORE</span></div>
+      </div>
+      <div class="node node-listen"><i></i><span>听</span><small>VOICE</small></div>
+      <div class="node node-think"><i></i><span>想</span><small>INTENT</small></div>
+      <div class="node node-sense"><i></i><span>看</span><small>WEATHER</small></div>
+      <div class="node node-act"><i></i><span>做</span><small>MOTION</small></div>
+      <svg class="agent-links" viewBox="0 0 1920 1080" aria-hidden="true">
+        <path d="M1410 300 C1280 390 1250 440 1190 500"/>
+        <path d="M1460 500 C1330 500 1260 510 1180 520"/>
+        <path d="M1410 760 C1280 680 1250 620 1190 570"/>
+        <path d="M540 760 C760 680 880 610 1010 560"/>
+      </svg>
+      <div class="agent-results">
+        <span><i></i>天气 · 晴 26°</span>
+        <span><i></i>音乐 · 已选 1 首</span>
+        <span><i></i>动作 · 前进 3 步</span>
+      </div>
+      <div class="agent-caption"><span>感知 · 理解 · 决策 · 行动</span><b>ENDLESS POSSIBILITIES</b></div>
+    </section>
+
+    <section class="scene emotion" data-scene="emotion">
+      <div class="scene-label"><span>06</span> EMOTIONAL RANGE</div>
+      <div class="emotion-copy">
+        <p class="kicker">每一帧，都有生命</p>
+        <h2>情绪，是它<br><em>最真实的语言。</em></h2>
+      </div>
+      <div class="emotion-word" id="emotion-word">好奇</div>
+      <div class="emotion-index" id="emotion-index">01 / 06</div>
+      <div class="hero-eyes hero-eyes-close" id="hero-eyes-emotion" aria-hidden="true"></div>
+      <div class="emotion-ring"></div>
+      <div class="emotion-caption"><span>好奇 · 俏皮 · 疑问 · 思考 · 兴奋 · 害羞</span><b>MOTION WITH A HEARTBEAT</b></div>
+    </section>
+
+    <section class="scene finale" data-scene="finale">
+      <div class="finale-rings"><i></i><i></i><i></i></div>
+      <div class="hero-eyes hero-eyes-final" id="hero-eyes-final" aria-hidden="true"></div>
+      <div class="finale-copy">
+        <p class="kicker">TIAOTIAO / AGENT INTERFACE</p>
+        <h1>跳跳</h1>
+        <h2>让机器人，真正活起来。</h2>
+        <div class="finale-line"></div>
+        <p class="finale-tags"><span>会看</span><i></i><span>会听</span><i></i><span>会行动</span></p>
+      </div>
+      <div class="finale-footer"><span>AI ROBOT INTERACTION</span><b>2026</b><span>ENDLESS POSSIBILITIES</span></div>
+    </section>
+
+    <div class="scene-caption" id="scene-caption"></div>
+    <div class="top-rail">
+      <div class="brand"><i></i><span>跳跳</span><small>TIAOTIAO / MOTION SYSTEM</small></div>
+      <div class="rail-meta"><span id="rail-scene">INTRO</span><b id="rail-time">00:00:00</b></div>
+    </div>
+    <div class="bottom-rail">
+      <span>AI ROBOT INTERACTION</span>
+      <div class="timeline"><i id="timeline-progress"></i><em></em></div>
+      <span>00:30</span>
+    </div>
+    <div class="transition-flash" id="transition-flash"></div>
+    <div class="grain" aria-hidden="true"></div>
+    <div class="letterbox top"></div>
+    <div class="letterbox bottom"></div>
+    <div class="end-black" id="end-black"></div>
+  </main>
+  <script src="promo.js"></script>
+</body>
+</html>

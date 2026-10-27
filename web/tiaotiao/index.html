@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#000000">
+    <meta name="description" content="跳跳的眼睛显示区域">
+    <title>跳跳的眼睛</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="stylesheet" href="/style.css">
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <main id="eye-display" class="eye-display" tabindex="0" aria-label="跳跳的眼睛">
+      <svg id="eye-stage" viewBox="0 0 800 400" data-state="idle" data-expression="happy" aria-hidden="true">
+        <g id="gaze">
+          <g class="eye-group" transform="translate(230 200)">
+            <path id="left-eye" d="M -38 14 C -34 -9 -23 -27 0 -27 C 23 -27 34 -9 38 14"/>
+          </g>
+          <g class="eye-group" transform="translate(570 200)">
+            <path id="right-eye" d="M -38 14 C -34 -9 -23 -27 0 -27 C 23 -27 34 -9 38 14"/>
+          </g>
+          <g id="eye-effects" transform="translate(612 161)" aria-hidden="true">
+            <g id="effect-stars">
+              <path class="sparkle sparkle-main" d="M0 -9 L2.4 -2.4 L9 0 L2.4 2.4 L0 9 L-2.4 2.4 L-9 0 L-2.4 -2.4 Z"/>
+              <path class="sparkle sparkle-small sparkle-one" d="M12 -16 L13.4 -12 L17 -10.6 L13.4 -9.2 L12 -5.5 L10.6 -9.2 L7 -10.6 L10.6 -12 Z"/>
+              <path class="sparkle sparkle-small sparkle-two" d="M-11 3 L-9.6 7 L-6 8.4 L-9.6 9.8 L-11 13.5 L-12.4 9.8 L-16 8.4 L-12.4 7 Z"/>
+            </g>
+            <g id="effect-question">
+              <path d="M-6 -6 C-6 -14 7 -15 9 -7 C10 -2 1 0 1 5"/>
+              <circle cx="1" cy="12" r="2"/>
+            </g>
+            <g id="effect-loading">
+              <circle class="loading-track" cx="0" cy="0" r="10"/>
+              <path class="loading-arc" d="M0 -10 A10 10 0 1 1 -9.5 3.2"/>
+            </g>
+          </g>
+        </g>
+      </svg>
+      <section id="music-view" class="music-view" aria-label="正在播放的歌曲" hidden>
+        <div class="music-circle music-cover-circle">
+          <img id="music-cover" class="music-cover-image" alt="歌曲封面" src="">
+          <div class="music-cover-shade" aria-hidden="true"></div>
+          <div class="music-cover-info">
+            <span class="music-kicker">NOW PLAYING</span>
+            <h1 id="music-title">等待歌曲</h1>
+            <p id="music-artist" class="music-artist"></p>
+            <p id="music-album" class="music-album"></p>
+          </div>
+        </div>
+        <div class="music-circle music-lyric-circle" data-overflow="false" aria-label="当前歌词">
+          <div class="music-lyric-viewport" aria-live="polite">
+            <span id="music-lyric">正在准备歌词…</span>
+          </div>
+        </div>
+      </section>
+      <section id="weather-view" class="weather-view" aria-label="当前天气" hidden>
+        <div class="weather-icon-panel">
+          <div id="weather-icon-orb" class="weather-icon-orb" data-kind="sunny" aria-hidden="true">
+            <svg id="weather-icon" viewBox="0 0 160 160">
+              <g class="weather-glyph weather-sunny">
+                <circle class="weather-sun-disc" cx="80" cy="80" r="27"></circle>
+                <path class="weather-sun-rays" d="M80 15v17m0 96v17M15 80h17m96 0h17M34 34l12 12m68 68 12 12m0-92-12 12m-68 68-12 12"></path>
+              </g>
+              <g class="weather-glyph weather-cloudy">
+                <path class="weather-cloud-shape" d="M43 108h70a22 22 0 0 0 0-44 34 34 0 0 0-65-7A26 26 0 0 0 43 108Z"></path>
+              </g>
+              <g class="weather-glyph weather-rainy">
+                <path class="weather-cloud-shape" d="M43 90h70a22 22 0 0 0 0-44 34 34 0 0 0-65-7A26 26 0 0 0 43 90Z"></path>
+                <path class="weather-rain-drops" d="m55 105-8 17m34-17-8 17m34-17-8 17"></path>
+              </g>
+              <g class="weather-glyph weather-snowy">
+                <path class="weather-cloud-shape" d="M43 83h70a22 22 0 0 0 0-44 34 34 0 0 0-65-7A26 26 0 0 0 43 83Z"></path>
+                <path class="weather-snow-flakes" d="M54 104v18m-8-9h16m22-9v18m-8-9h16m22-9v18m-8-9h16"></path>
+              </g>
+              <g class="weather-glyph weather-stormy">
+                <path class="weather-cloud-shape" d="M43 83h70a22 22 0 0 0 0-44 34 34 0 0 0-65-7A26 26 0 0 0 43 83Z"></path>
+                <path class="weather-lightning" d="m84 84-18 31h18l-8 25 28-38H85l12-18Z"></path>
+              </g>
+              <g class="weather-glyph weather-foggy">
+                <path class="weather-cloud-shape" d="M43 71h70a22 22 0 0 0 0-44 34 34 0 0 0-65-7A26 26 0 0 0 43 71Z"></path>
+                <path class="weather-fog-lines" d="M34 91h92M24 108h92M42 125h78"></path>
+              </g>
+            </svg>
+          </div>
+        </div>
+        <div class="weather-info-panel">
+          <span id="weather-location" class="weather-location">正在定位</span>
+          <strong id="weather-temperature" class="weather-temperature">--°</strong>
+          <span id="weather-condition" class="weather-condition">读取天气中</span>
+          <div id="weather-details" class="weather-details">正在获取实时信息…</div>
+          <small id="weather-updated" class="weather-updated"></small>
+        </div>
+      </section>
+      <audio id="music-audio" preload="none"></audio>
+      <aside id="debug-panel" class="debug-panel" aria-label="跳跳调试信息">
+        <div class="debug-heading">
+          <span class="debug-title"><i id="debug-dot"></i>DEBUG WINDOW</span>
+          <span id="debug-clock" class="debug-clock">--:--:--</span>
+        </div>
+        <div class="debug-grid">
+          <div class="debug-cell">
+            <span class="debug-label">当前状态</span>
+            <strong id="debug-state">待机监听</strong>
+            <small id="debug-state-detail">页面加载后自动监听唤醒词</small>
+          </div>
+          <div class="debug-cell">
+            <span class="debug-label">语音识别</span>
+            <strong id="debug-recognition">自动启动中</strong>
+            <small id="debug-transcript">等待「你好跳跳」</small>
+          </div>
+          <div class="debug-cell">
+            <span class="debug-label">AI 处理阶段</span>
+            <strong id="debug-ai">空闲</strong>
+            <small id="debug-output">等待新的对话</small>
+            <svg id="debug-progress-track" class="debug-progress-track" viewBox="0 0 100 4" preserveAspectRatio="none" role="progressbar" aria-label="AI 处理阶段" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <rect id="debug-progress" x="0" y="0" width="0" height="4" rx="2"></rect>
+            </svg>
+          </div>
+          <div class="debug-cell">
+            <span class="debug-label">语音合成 / 播放</span>
+            <strong id="debug-tts">待机</strong>
+            <small id="debug-tts-detail">尚未开始合成</small>
+            <svg id="debug-tts-progress-track" class="debug-progress-track" viewBox="0 0 100 4" preserveAspectRatio="none" role="progressbar" aria-label="语音播放进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <rect id="debug-tts-progress" x="0" y="0" width="0" height="4" rx="2"></rect>
+            </svg>
+          </div>
+          <div class="debug-cell">
+            <span class="debug-label">语音资源 / 下载状态</span>
+            <strong id="debug-voice-resource">检查中</strong>
+            <small id="debug-download-progress">等待浏览器语音列表</small>
+            <svg id="debug-resource-progress-track" class="debug-progress-track" viewBox="0 0 100 4" preserveAspectRatio="none" role="progressbar" aria-label="语音资源就绪状态" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <rect id="debug-resource-progress" x="0" y="0" width="0" height="4" rx="2"></rect>
+            </svg>
+          </div>
+          <div class="debug-cell music-debug-cell">
+            <span class="debug-label">音乐播放</span>
+            <strong id="debug-music-status">待机</strong>
+            <small id="debug-music-detail">等待语音指令或手动搜索</small>
+          </div>
+          <div class="debug-cell weather-debug-cell">
+            <span class="debug-label">天气查询</span>
+            <strong id="debug-weather-status">待机</strong>
+            <small id="debug-weather-detail">等待语音天气指令</small>
+          </div>
+          <div class="debug-cell action-debug-cell">
+            <span class="debug-label">机器人动作任务</span>
+            <strong id="debug-action-status">待机</strong>
+            <small id="debug-action-progress">0%</small>
+            <div id="debug-action-list" class="action-task-list" aria-live="polite"><span class="action-task-empty">等待 AI 动作指令</span></div>
+          </div>
+        </div>
+        <form id="model-config-form" class="model-config-form">
+          <label for="debug-model-name">对话模型名称</label>
+          <input id="debug-model-name" name="model" type="text" maxlength="160" value="" placeholder="输入模型名称" autocomplete="off" spellcheck="false" aria-label="自定义对话模型名称">
+          <button type="submit">应用</button>
+          <span id="debug-model-status">当前：未配置模型</span>
+        </form>
+        <form id="background-config-form" class="background-config-form">
+          <label for="background-preset">网页背景颜色</label>
+          <select id="background-preset" aria-label="网页背景颜色预设">
+            <option value="#000000">纯黑 · #000000</option>
+            <option value="#00ff00">荧光绿 · #00ff00</option>
+            <option value="custom">自定义颜色</option>
+          </select>
+          <input id="background-color" type="color" value="#000000" aria-label="自定义网页背景颜色">
+          <span id="background-color-status">当前：#000000</span>
+        </form>
+        <div class="debug-action-controls" role="group" aria-label="调试操作">
+          <button id="manual-listen" type="button">进入聆听</button>
+          <span>跳过唤醒词，直接等待语音指令</span>
+        </div>
+        <div class="expression-controls" role="group" aria-label="手动表情预览">
+          <span class="debug-label">表情预览 · 点击播放一次</span>
+          <div id="expression-buttons" class="expression-buttons">
+            <button type="button" data-expression="happy">开心</button>
+            <button type="button" data-expression="wink">眨眼</button>
+            <button type="button" data-expression="question">疑问</button>
+            <button type="button" data-expression="curious">好奇</button>
+            <button type="button" data-expression="surprised">惊讶</button>
+            <button type="button" data-expression="sleepy">困倦</button>
+            <button type="button" data-expression="sad">难过</button>
+            <button type="button" data-expression="angry">生气</button>
+            <button type="button" data-expression="shy">害羞</button>
+            <button type="button" data-expression="unimpressed">无语</button>
+            <button type="button" data-expression="focused">专注</button>
+            <button type="button" data-expression="confused">困惑</button>
+            <button type="button" data-expression="calm">平静</button>
+          </div>
+        </div>
+        <form id="music-search-form" class="music-search-controls">
+          <input id="music-search-query" type="search" maxlength="120" placeholder="输入歌名或歌手" aria-label="歌曲名或歌手">
+          <select id="music-search-type" aria-label="音乐平台">
+            <option value="wy">网易</option>
+            <option value="qq">QQ</option>
+            <option value="kw">酷我</option>
+            <option value="kg">酷狗</option>
+            <option value="mg">咪咕</option>
+            <option value="qi">千千</option>
+          </select>
+          <button type="submit">搜歌并播放</button>
+          <button id="music-play-toggle" type="button">播放 / 暂停</button>
+          <button id="music-stop" type="button">停止</button>
+        </form>
+        <div id="debug-log" class="debug-log" aria-live="polite"><span>系统已就绪，等待语音唤醒</span></div>
+      </aside>
+    </main>
+  </body>
+</html>
